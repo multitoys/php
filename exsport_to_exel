@@ -1,0 +1,48 @@
+<?php
+// koneksi database
+$db = "bfb";
+
+mysql_connect("localhost","root","");
+mysql_select_db("$db");
+
+$format=$_GET['format'];
+$filename = "Exsport_siswa-".$format.".xls";
+
+// nilai awal counter untuk jumlah data yang sukses dan yang gagal diimport
+$sukses = 0;
+$gagal = 0;
+$table = "siswa";
+if($format=="semua"){
+$here="";
+}else{
+$here= "Where id_jurusan='$format'";
+}
+
+//jumlah kolom
+$jkolom=0;
+
+//generate kolom
+$q= mysql_query("select * from $table $here ");
+$r=mysql_fetch_assoc($q);
+foreach ($r as $head=>$nilai) {
+$header .=$head." \t"; //print header table
+$jkolom++;
+}
+$header .= "\n";
+
+//generate baris
+$result= mysql_query("select * from $table $here");
+while ($row=mysql_fetch_array($result)) {
+for ($x=0; $x<$jkolom; $x++) {
+$content .=$row[$x]." \t ";
+}
+$content .= $row[$x]." \n ";
+}
+
+
+$output .= $header.$content;
+header('Content-type:application/ms-excel');
+header('Content-Disposition: attachment; filename='.$filename);
+echo $output;
+
+?>
