@@ -1,0 +1,49 @@
+<?php
+// koneksi database
+$db = "bfb";
+
+mysql_connect("localhost","root","");
+mysql_select_db("$db");
+
+$format=$_GET['format'];
+$filename = "Exsport_siswa-".$format.".xls";
+
+// nilai awal counter untuk jumlah data yang sukses dan yang gagal diimport
+$sukses = 0;
+$gagal = 0;
+$table = "siswa";
+if($format=="semua"){
+$here="";
+}else{
+$here= "Where id_jurusan='$format'";
+}
+
+//jumlah kolom
+$jkolom=0;
+
+//generate kolom
+$q= mysql_query("select id_siswa As [ID], no_daftar As [No Pendaftaran], nis As [NIS], nama As [Nama Siswa], nisn As [NISN], tempat As [Tempat], tgl_lahir As [Tanggal Lahir], warga As [Kewarganegaraan], jk As [Jenis Kelamin], agama As [Agama], al_jl As [Alamat], al_rt As [RT], al_rw As [RW], al_no As [NO], tlp As [Telepon], desa As [Desa], kec As [Kecamatan], kab As [kabupaten], ayah As [Nama Ayah], ibu As [Nama Ibu], pekerjaan As [Pekerjaan], a_jl As [Alamat], a_rt As [RT], a_rw As [RW], a_no As [No], tlp2 As [Telepon], desa2 As [Des], kec2 As [Kec], kab2 As [Kab], wali As [Nama Wali], pek_wali As [Pekerjaan Wali], w_jl As [Alamat Wali], w_rt As [Rt], w_rw As [Rw], w_no As [No], tlp3 As [Tlp], desa3 As [Des], kec3 As [Kec], kab3 As [Kab], asal_sekolah As [Asal Sekolah], alamat_sekolah As [Alamat Sekolah], no_Sttb As [NO STTB], tgl_sttb As [Tanggal STTB], no_skhun As [No SKHUN], no_peserta_un As [No Peserta UN], exskul As [Ekstrakulikuler], prestasi As [Prestasi], id_jurusan As [Jurusan] from $table");
+$r=mysql_fetch_assoc($q);
+foreach ($r as $head=>$nilai) {
+$header .=$head." \t"; //print header table
+$jkolom++;
+}
+$header .= "\n";
+
+//generate baris
+
+$result= mysql_query("select id_siswa As [ID], no_daftar As [No Pendaftaran], nis As [NIS], nama As [Nama Siswa], nisn As [NISN], tempat As [Tempat], tgl_lahir As [Tanggal Lahir], warga As [Kewarganegaraan], jk As [Jenis Kelamin], agama As [Agama], al_jl As [Alamat], al_rt As [RT], al_rw As [RW], al_no As [NO], tlp As [Telepon], desa As [Desa], kec As [Kecamatan], kab As [kabupaten], ayah As [Nama Ayah], ibu As [Nama Ibu], pekerjaan As [Pekerjaan], a_jl As [Alamat], a_rt As [RT], a_rw As [RW], a_no As [No], tlp2 As [Telepon], desa2 As [Des], kec2 As [Kec], kab2 As [Kab], wali As [Nama Wali], pek_wali As [Pekerjaan Wali], w_jl As [Alamat Wali], w_rt As [Rt], w_rw As [Rw], w_no As [No], tlp3 As [Tlp], desa3 As [Des], kec3 As [Kec], kab3 As [Kab], asal_sekolah As [Asal Sekolah], alamat_sekolah As [Alamat Sekolah], no_Sttb As [NO STTB], tgl_sttb As [Tanggal STTB], no_skhun As [No SKHUN], no_peserta_un As [No Peserta UN], exskul As [Ekstrakulikuler], prestasi As [Prestasi], id_jurusan As [Jurusan] from $table $here");
+while ($row=mysql_fetch_array($result)) {
+for ($x=0; $x<$jkolom; $x++) {
+$content .=$row[$x]." \t ";
+}
+$content .= $row[$x]." \n ";
+}
+
+
+$output .= $header.$content;
+header('Content-type:application/ms-excel');
+header('Content-Disposition: attachment; filename='.$filename);
+echo $output;
+
+?>
